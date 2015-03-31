@@ -1,5 +1,7 @@
 package practicaltest01var04.pdsd.systems.cs.pub.ro.practicaltest01var04;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 public class PracticalTest01Var04MainActivity extends ActionBarActivity {
@@ -27,7 +30,10 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
 
     private ButtonClickListener buttonClickListener = new ButtonClickListener();
     private int total_tries = 0, good_tries = 0;
-    private final String TOTAL_KEY = "total_tries", GOOD_KEY = "good_tries";
+    public final static String TOTAL_KEY = "total_tries", GOOD_KEY = "good_tries",
+        TEXT_KEY = "ro.pub.cs.systems.pdsd.practicaltest01var04.notes",
+        RESULT_KEY = "activity_result";
+    final private static int SECOND_ACTIVITY_REQUEST_CODE = 2015;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +47,49 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
                 Button b = (Button) main_layout.getChildAt(i);
                 b.setOnClickListener(buttonClickListener);
             }
+
+        Button nav_button = (Button)findViewById(R.id.nav_button);
+
+        nav_button.setOnClickListener(new Button.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                EditText edit = (EditText)findViewById(R.id.editText);
+
+                Intent intent =
+                        new Intent("ro.pub.cs.systems.pdsd.intent.action.PracticalTest01Var04SecondaryActivity");
+                intent.putExtra(TEXT_KEY, edit.getText().toString());
+
+                startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
+            }
+        });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch(requestCode) {
+            case SECOND_ACTIVITY_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Bundle data = intent.getExtras();
+
+                    boolean correct = data.getBoolean(RESULT_KEY);
+                    total_tries++;
+                    if (correct)
+                        good_tries++;
+
+                    Toast.makeText(getApplicationContext(),
+                            "Incercarea a fost " + (correct ? "corecta" : "gresita"),
+                            Toast.LENGTH_LONG).show();
+
+                    EditText edit = (EditText)findViewById(R.id.editText);
+                    edit.setText("");
+                }
+                break;
+        }
     }
 
     @Override
     protected  void onStart() {
-
+        super.onStart();
         Log.println(Log.DEBUG, "Colocviu", "Total = " + total_tries  + "; good = " + good_tries +
                 "; bad = " + (total_tries - good_tries));
     }
