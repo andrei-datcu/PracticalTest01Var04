@@ -29,8 +29,9 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
     }
 
     private ButtonClickListener buttonClickListener = new ButtonClickListener();
-    private int total_tries = 0, good_tries = 0;
+    private int total_tries = 0, good_tries = 0, bad_tries = 0;
     public final static String TOTAL_KEY = "total_tries", GOOD_KEY = "good_tries",
+        BAD_KEY = "bad_tries",
         TEXT_KEY = "ro.pub.cs.systems.pdsd.practicaltest01var04.notes",
         RESULT_KEY = "activity_result";
     final private static int SECOND_ACTIVITY_REQUEST_CODE = 2015;
@@ -75,6 +76,8 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
                     total_tries++;
                     if (correct)
                         good_tries++;
+                    else
+                        bad_tries++;
 
                     Toast.makeText(getApplicationContext(),
                             "Incercarea a fost " + (correct ? "corecta" : "gresita"),
@@ -88,18 +91,12 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
     }
 
     @Override
-    protected  void onStart() {
-        super.onStart();
-        Log.println(Log.DEBUG, "Colocviu", "Total = " + total_tries  + "; good = " + good_tries +
-                "; bad = " + (total_tries - good_tries));
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
         savedInstanceState.putInt(TOTAL_KEY, total_tries);
         savedInstanceState.putInt(GOOD_KEY, good_tries);
+        savedInstanceState.putInt(BAD_KEY, bad_tries);
     }
 
     @Override
@@ -108,6 +105,10 @@ public class PracticalTest01Var04MainActivity extends ActionBarActivity {
 
         total_tries = savedInstanceState.getInt(TOTAL_KEY);
         good_tries = savedInstanceState.getInt(GOOD_KEY);
+        bad_tries = savedInstanceState.getInt(BAD_KEY);
+
+        Log.println(Log.DEBUG, "Colocviu", "Total = " + total_tries  + "; good = " + good_tries +
+                "; bad = " + bad_tries);
     }
 
     @Override
